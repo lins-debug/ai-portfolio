@@ -1,0 +1,21 @@
+﻿# 各项目私有配置
+project-*-rag-assistant/.env
+project-*-sql-agent/.env
+project-*-jd-match/.env
+
+# 虚拟环境
+project-*-rag-assistant/venv/
+project-*-sql-agent/venv/
+project-*-jd-match/venv/
+
+# 运行时数据
+project-*-rag-assistant/chroma_db/
+project-*-sql-agent/company.db
+
+# Python
+__pycache__/
+*.pyc
+.egg-info/
+
+# 参考项目（不纳入作品集）
+rag-playground/

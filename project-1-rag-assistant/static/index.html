@@ -1,0 +1,66 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAG 求职知识库助手</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, -apple-system, sans-serif; max-width: 800px; margin: 40px auto; padding: 0 20px; color: #1a1a1a; }
+  h1 { font-size: 22px; margin-bottom: 24px; }
+  .search-box { display: flex; gap: 8px; margin-bottom: 24px; }
+  .search-box input { flex: 1; padding: 10px 14px; border: 1px solid #d0d0d0; border-radius: 6px; font-size: 15px; }
+  .search-box button { padding: 10px 20px; background: #1a1a1a; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-size: 15px; }
+  .search-box button:hover { background: #333; }
+  .answer { background: #f5f5f5; padding: 16px; border-radius: 6px; margin-bottom: 20px; line-height: 1.7; white-space: pre-wrap; }
+  .sources { list-style: none; }
+  .source-item { border: 1px solid #e5e5e5; padding: 12px; border-radius: 6px; margin-bottom: 8px; }
+  .source-item .meta { font-size: 13px; color: #666; margin-bottom: 4px; }
+  .source-item .text { font-size: 14px; line-height: 1.6; color: #333; }
+  .loading { color: #999; font-size: 14px; }
+</style>
+</head>
+<body>
+<h1>🎯 RAG 求职知识库助手</h1>
+<div class="search-box">
+  <input id="question" type="text" placeholder="输入问题，例如：什么是 RAG？" autofocus>
+  <button id="askBtn">提问</button>
+</div>
+<div id="result"></div>
+
+<script>
+const input = document.getElementById("question");
+const btn = document.getElementById("askBtn");
+const result = document.getElementById("result");
+
+async function ask() {
+  const q = input.value.trim();
+  if (!q) return;
+  result.innerHTML = '<p class="loading">检索中...</p>';
+  try {
+    const res = await fetch("/ask", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ question: q, top_k: 3 }),
+    });
+    const data = await res.json();
+    let html = "";
+    if (data.answer) {
+      html += '<div class="answer">' + data.answer + "</div>";
+    }
+    html += "<h3 style='margin-bottom:10px'>来源</h3><ul class='sources'>";
+    for (const s of data.sources) {
+      html += '<li class="source-item"><div class="meta">' + s.source + " / " + s.title + " (相似度: " + s.similarity + ")</div><div class='text'>" + s.text + "</div></li>";
+    }
+    html += "</ul>";
+    result.innerHTML = html;
+  } catch (e) {
+    result.innerHTML = '<p style="color:red">错误：' + e.message + "</p>";
+  }
+}
+
+btn.addEventListener("click", ask);
+input.addEventListener("keydown", (e) => { if (e.key === "Enter") ask(); });
+</script>
+</body>
+</html>
