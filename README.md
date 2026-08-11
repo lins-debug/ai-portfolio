@@ -31,7 +31,6 @@
 ## 一键启动
 
 ```bash
-cd exercises
 docker compose up --build
 ```
 
@@ -41,11 +40,11 @@ docker compose up --build
 | SQL Agent | http://127.0.0.1:8011 |
 | JD 匹配 | http://127.0.0.1:8012 |
 
-初始化数据：
+启动后初始化数据：
 
 ```bash
-docker exec -it exercises-rag-1 python ingest.py
-docker exec -it exercises-sql-1 python db.py
+docker compose exec rag python ingest.py
+docker compose exec sql python db.py
 ```
 
 ## 技术栈
@@ -55,7 +54,6 @@ Python · FastAPI · Chroma · SQLite · Docker · DeepSeek API (OpenAI 兼容)
 ## 仓库结构
 
 ```
-exercises/
 ├── docker-compose.yml              # 统一编排
 ├── project-1-rag-assistant/        # RAG 知识库
 ├── project-2-sql-agent/            # SQL Agent
